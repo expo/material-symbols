@@ -1,0 +1,17 @@
+{
+  "name": "expo-material-symbols",
+  "version": "0.1.0",
+  "main": "index.ts",
+  "sideEffects": false,
+  "scripts": {
+    "generate": "bun run generate.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@iconify/utils": "^3.1.0",
+    "svg2vectordrawable": "^2.9.1"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}

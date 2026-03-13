@@ -1,0 +1,10 @@
+export { ArrowBack } from './modules/arrow_back';
+export { ArrowForward } from './modules/arrow_forward';
+export { Check } from './modules/check';
+export { Close } from './modules/close';
+export { Favorite } from './modules/favorite';
+export { Home } from './modules/home';
+export { Menu } from './modules/menu';
+export { Search } from './modules/search';
+export { Settings } from './modules/settings';
+export { Star } from './modules/star';

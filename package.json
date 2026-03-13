@@ -1,0 +1,8 @@
+{
+  "name": "expo-material-symbols-monorepo",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "example"
+  ]
+}
