@@ -1,24 +1,17 @@
-import { parseIconSet, iconToSVG, iconToHTML, type IconifyIcon } from "@iconify/utils";
+import {
+  parseIconSet,
+  iconToSVG,
+  iconToHTML,
+  type IconifyIcon,
+} from "@iconify/utils";
 import svg2vectordrawable from "svg2vectordrawable";
 import { mkdir, writeFile } from "fs/promises";
+import type { IconifyJSON } from "@iconify/types";
 
 const ICONS_DIR = "./icons";
+const MODULES_DIR = "./modules";
 const JSON_URL =
   "https://raw.githubusercontent.com/iconify/icon-sets/master/json/material-symbols.json";
-
-// Specific icons to generate (use null to just take the first N)
-const WANTED_ICONS: string[] | null = [
-  "star",
-  "home",
-  "search",
-  "settings",
-  "favorite",
-  "close",
-  "menu",
-  "check",
-  "arrow-back",
-  "arrow-forward",
-];
 
 function toPascalCase(str: string): string {
   const pascal = str
@@ -33,36 +26,33 @@ function toFileName(name: string): string {
   return name.replace(/-/g, "_");
 }
 
+/** Keep only outlined style — filter out -rounded and -sharp suffixes */
+function isOutlinedStyle(name: string): boolean {
+  return !name.endsWith("-rounded") && !name.endsWith("-sharp");
+}
+
 async function main() {
   console.log("Downloading material-symbols.json...");
   const response = await fetch(JSON_URL);
   if (!response.ok) throw new Error(`Failed to fetch: ${response.status}`);
-  const iconSet = await response.json();
+  const iconSet = (await response.json()) as IconifyJSON;
 
   await mkdir(ICONS_DIR, { recursive: true });
+  await mkdir(MODULES_DIR, { recursive: true });
 
-  // Collect icons
+  // Collect outlined-style icons only
   const icons: { name: string; data: IconifyIcon }[] = [];
-  const wantedSet = WANTED_ICONS ? new Set(WANTED_ICONS) : null;
 
   parseIconSet(iconSet, (name, data) => {
     if (!data) return;
-    if (wantedSet) {
-      if (wantedSet.has(name)) icons.push({ name, data });
-    } else {
-      if (icons.length < 10) icons.push({ name, data });
+    if (isOutlinedStyle(name)) {
+      icons.push({ name, data });
     }
   });
 
-  if (wantedSet) {
-    const found = new Set(icons.map((i) => i.name));
-    const missing = WANTED_ICONS!.filter((n) => !found.has(n));
-    if (missing.length) console.warn(`Warning: icons not found: ${missing.join(", ")}`);
-  }
+  console.log(`Processing ${icons.length} outlined icons...`);
 
-  console.log(`Processing ${icons.length} icons...`);
-
-  // Generate XML files
+  // Generate XML files and per-icon modules
   const exports: { fileName: string; exportName: string }[] = [];
 
   for (const { name, data } of icons) {
@@ -72,33 +62,18 @@ async function main() {
 
     const fileName = toFileName(name);
     await writeFile(`${ICONS_DIR}/${fileName}.xml`, xml);
+    await writeFile(
+      `${MODULES_DIR}/${fileName}.ts`,
+      `export const ${toPascalCase(name)} = require('../icons/${fileName}.xml');\n`,
+    );
 
     exports.push({
       fileName,
       exportName: toPascalCase(name),
     });
-
-    console.log(`  ✓ ${fileName}.xml`);
   }
 
-  // Sort exports alphabetically
-  exports.sort((a, b) => a.exportName.localeCompare(b.exportName));
-
-  // Generate per-icon modules (one file per icon for tree-shaking)
-  await mkdir('./modules', { recursive: true });
-  for (const e of exports) {
-    await writeFile(
-      `./modules/${e.fileName}.ts`,
-      `export const ${e.exportName} = require('../icons/${e.fileName}.xml');\n`
-    );
-  }
-
-  // Generate barrel index.ts with re-exports
-  const indexLines = exports.map(
-    (e) => `export { ${e.exportName} } from './modules/${e.fileName}';`
-  );
-  await writeFile("./index.ts", indexLines.join("\n") + "\n");
-  console.log(`\nGenerated ${exports.length} modules + index.ts`);
+  console.log(`Generated ${exports.length} icons and modules`);
 }
 
 main().catch(console.error);

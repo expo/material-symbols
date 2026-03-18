@@ -6,7 +6,7 @@ alwaysApply: false
 
 ## Project
 
-expo-material-symbols is a tree-shakeable Material Symbols icon library for Expo/React Native Android. It generates Android XML vector drawables from Material Symbols and lets Metro tree-shake to only the icons actually imported.
+`expo-material-symbols` is a tree-shakeable Material Symbols icon library for Expo/React Native Android. It generates Android XML vector drawables from Material Symbols and lets Metro tree-shake to only the icons actually imported.
 
 ### Structure (monorepo)
 

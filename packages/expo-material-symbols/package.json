@@ -1,13 +1,17 @@
 {
-  "name": "expo-material-symbols",
+  "name": "@expo/material-symbols",
   "version": "0.1.0",
-  "main": "index.ts",
   "sideEffects": false,
+  "exports": {
+    "./*": "./modules/*.ts"
+  },
   "scripts": {
-    "generate": "bun run generate.ts"
+    "generate": "bun run generate.ts",
+    "prepare": "bun run generate.ts"
   },
   "devDependencies": {
     "@types/bun": "latest",
+    "@iconify/types": "^2.0.0",
     "@iconify/utils": "^3.1.0",
     "svg2vectordrawable": "^2.9.1"
   },

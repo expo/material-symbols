@@ -1,63 +1,21 @@
-import { Host, Icon } from "@expo/ui/jetpack-compose";
-import { Home, Search, Star } from "expo-material-symbols";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
-
-const icons = [
-  { name: "Star", source: Star },
-  { name: "Home", source: Home },
-  { name: "Search", source: Search },
-];
-
-console.log({ Star });
+import { StyleSheet, Text, View } from "react-native";
 
 export default function IconsScreen() {
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>expo-material-symbols</Text>
-      <Text style={styles.subtitle}>via @expo/ui Icon (Jetpack Compose)</Text>
-      <View style={styles.iconRow}>
-        {icons.map(({ name, source }) => (
-          <View key={name} style={styles.iconCell}>
-            <Host matchContents>
-              <Icon source={source} contentDescription={name} size={32} />
-            </Host>
-            <Text style={styles.iconLabel}>{name}</Text>
-          </View>
-        ))}
-      </View>
-    </ScrollView>
+    <View style={styles.container}>
+      <Text style={styles.text}>TODO</Text>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
-    rowGap: 20,
-    paddingBottom: 40,
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
   },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-  subtitle: {
-    fontSize: 14,
-    textAlign: "center",
+  text: {
+    fontSize: 16,
     color: "#666",
-  },
-  iconRow: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 12,
-    alignItems: "center",
-  },
-  iconCell: {
-    alignItems: "center",
-    width: 80,
-    rowGap: 4,
-  },
-  iconLabel: {
-    fontSize: 10,
-    textAlign: "center",
   },
 });
