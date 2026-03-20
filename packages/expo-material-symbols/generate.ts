@@ -10,8 +10,7 @@ import type { IconifyJSON } from "@iconify/types";
 
 const ICONS_DIR = "./icons";
 const MODULES_DIR = "./modules";
-const JSON_URL =
-  "https://raw.githubusercontent.com/iconify/icon-sets/master/json/material-symbols.json";
+const ICON_SET_PATH = "./material-symbols.json";
 
 function toPascalCase(str: string): string {
   const pascal = str
@@ -32,10 +31,13 @@ function isOutlinedStyle(name: string): boolean {
 }
 
 async function main() {
-  console.log("Downloading material-symbols.json...");
-  const response = await fetch(JSON_URL);
-  if (!response.ok) throw new Error(`Failed to fetch: ${response.status}`);
-  const iconSet = (await response.json()) as IconifyJSON;
+  const file = Bun.file(ICON_SET_PATH);
+  if (!(await file.exists())) {
+    throw new Error(
+      `${ICON_SET_PATH} not found. Run "bun run update-icons" to download it.`,
+    );
+  }
+  const iconSet = (await file.json()) as IconifyJSON;
 
   await mkdir(ICONS_DIR, { recursive: true });
   await mkdir(MODULES_DIR, { recursive: true });

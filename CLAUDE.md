@@ -6,19 +6,19 @@ alwaysApply: false
 
 ## Project
 
-`expo-material-symbols` is a tree-shakeable Material Symbols icon library for Expo/React Native Android. It generates Android XML vector drawables from Material Symbols and lets Metro tree-shake to only the icons actually imported.
+`@expo/material-symbols` is a tree-shakeable Material Symbols icon library for Expo/React Native Android. It generates Android XML vector drawables from Material Symbols (outlined style). Icons are generated at build time via `prepare` script.
 
 ### Structure (monorepo)
 
 ```
-packages/expo-material-symbols/   # the library
-  icons/*.xml                     # generated Android vector drawables
-  modules/*.ts                    # one re-export per icon: `export const Home = require('../icons/home.xml')`
-  index.ts                        # barrel export
-  generate.ts                     # icon generation script (svg → xml)
+packages/expo-material-symbols/   # the library (@expo/material-symbols)
+  icons/*.xml                     # generated (gitignored) Android vector drawables
+  modules/*.ts                    # generated (gitignored) one re-export per icon
+  generate.ts                     # icon generation script (svg → xml), runs on `prepare`
 example/                          # test Expo app
   metro.config.js                 # watchFolders=[monorepo root], assetExts includes 'xml'
-  src/app/icons.tsx               # test screen rendering icons
+  src/app/icons.android.tsx       # Android test screen rendering icons
+  src/app/icons.tsx               # iOS/web fallback (TODO)
 ```
 
 ### How icons render
@@ -27,14 +27,14 @@ Icons are consumed via `@expo/ui/jetpack-compose`'s `<Icon>` component on Androi
 
 ```tsx
 import { Host, Icon } from "@expo/ui/jetpack-compose";
-import { Star } from "expo-material-symbols";
+import { Star } from "@expo/material-symbols/star";
 
 <Host matchContents>
   <Icon source={Star} size={32} />
 </Host>;
 ```
 
-`source` takes the Metro asset ID from `require('./icon.xml')`. The `<Icon>` component calls `Image.resolveAssetSource(source)` and passes the resolved URI to the native `ExpoUI` `IconView`. `<Host matchContents>` is required — without it the Compose host has 0×0 size.
+Each icon is imported from its own subpath (`@expo/material-symbols/<icon-name>`). `source` takes the Metro asset ID from `require('./icon.xml')`. `<Host matchContents>` is required — without it the Compose host has 0×0 size.
 
 ### Verification
 
