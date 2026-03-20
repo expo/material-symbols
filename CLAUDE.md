@@ -27,7 +27,7 @@ Icons are consumed via `@expo/ui/jetpack-compose`'s `<Icon>` component on Androi
 
 ```tsx
 import { Host, Icon } from "@expo/ui/jetpack-compose";
-import { Star } from "@expo/material-symbols/star";
+import { Star } from "@expo/material-symbols/Star";
 
 <Host matchContents>
   <Icon source={Star} size={32} />
