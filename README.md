@@ -34,11 +34,13 @@ import { Star } from "@expo/material-symbols/star";
 import { Home } from "@expo/material-symbols/home";
 
 <Host matchContents>
-  <Icon source={Star} size={32} />
+  <Icon source={Star} size={32} tintColor="#007AFF" />
 </Host>;
 ```
 
-`<Host matchContents>` is required — without it the Compose host has 0×0 size.
+- **`size`** — icon size in dp
+- **`tintColor`** — any React Native `ColorValue` (hex, named color, etc.). Overrides the XML's fill color at runtime.
+- **`<Host matchContents>`** is required — without it the Compose host has 0×0 size.
 
 ## How it works
 
@@ -62,6 +64,10 @@ const MyIcon = require("./assets/my-icon.xml");
 ```
 
 This works for rounded, sharp, or any custom Material Symbols style — just export the SVG from [Google Fonts](https://fonts.google.com/icons) and convert it to an Android vector drawable.
+
+## Credits
+
+The icon SVGs are from Google's [Material Symbols](https://github.com/google/material-design-icons), licensed under [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0). Icon data is sourced via the [Iconify icon-sets](https://github.com/iconify/icon-sets) collection.
 
 ## Development
 
