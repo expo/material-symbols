@@ -2,6 +2,11 @@
   "name": "@expo/material-symbols",
   "version": "0.1.0",
   "sideEffects": false,
+  "files": [
+    "icons",
+    "modules",
+    "NOTICE"
+  ],
   "exports": {
     "./*": "./modules/*.ts"
   },
