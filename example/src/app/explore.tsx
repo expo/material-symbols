@@ -1,4 +1,4 @@
-import AntDesign from "@react-native-vector-icons/ant-design";
+import AntDesign from "@react-native-vector-icons/ant-design/static";
 import { useState } from "react";
 import {
   Button,
@@ -113,10 +113,8 @@ function GetImageSourceExample() {
                 48,
                 "#3498db",
               );
-              console.log({ source });
 
-              // @ts-ignore
-              setImageUri(source.uri.uri);
+              setImageUri(source.uri);
             } catch (err) {
               console.error("Error generating image source:", err);
             }

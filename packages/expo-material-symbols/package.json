@@ -5,21 +5,31 @@
   "files": [
     "icons",
     "modules",
+    "bin",
     "NOTICE"
   ],
+  "bin": {
+    "add-icon": "./bin/add-icon.mjs"
+  },
   "exports": {
     "./*": "./modules/*.ts"
   },
   "scripts": {
     "generate": "bun run generate.ts",
     "update-icons": "bun run update-icons.ts",
-    "prepare": "bun run generate.ts"
+    "add-icon": "bun run add-icon.ts",
+    "build-cli": "bun build add-icon.ts --target node --format esm --outfile bin/add-icon.mjs --external @iconify/tools",
+    "typecheck": "tsc",
+    "test": "bun test",
+    "prepare": "bun run generate.ts && bun run build-cli"
+  },
+  "dependencies": {
+    "@iconify/tools": "^5.0.6"
   },
   "devDependencies": {
-    "@types/bun": "latest",
     "@iconify/types": "^2.0.0",
     "@iconify/utils": "^3.1.0",
-    "svg2vectordrawable": "^2.9.1"
+    "@types/bun": "latest"
   },
   "peerDependencies": {
     "typescript": "^5"

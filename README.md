@@ -49,6 +49,28 @@ import { Home } from "@expo/material-symbols/home";
 - The `@expo/ui` `<Icon>` component resolves the asset and renders it natively via Jetpack Compose.
 - Icons and modules are generated at install time via the `prepare` script and are gitignored.
 
+## CLI: adding individual icons
+
+The `add-icon` CLI downloads a single Material Symbols icon as an Android XML vector drawable. This is useful when you want specific axis values (fill, weight, grade, optical size) instead of the default outlined set.
+
+```bash
+# By name (uses default axes: outlined, weight 400, grade 0, 24px)
+npx add-icon "Arrow Back"
+
+# From a Google Fonts URL (preserves the axes you picked in the UI)
+npx add-icon "https://fonts.google.com/icons?selected=Material+Symbols+Outlined:check_box:FILL@1;wght@300;GRAD@0;opsz@24"
+
+# Custom output directory
+npx add-icon -o ./my-icons search
+```
+
+| Option               | Description      | Default    |
+| -------------------- | ---------------- | ---------- |
+| `-o, --output <dir>` | Output directory | `./assets` |
+| `-h, --help`         | Show help        |            |
+
+The output is a ready-to-use XML vector drawable that you can import directly (see [Using custom XML icons](#using-custom-xml-icons)).
+
 ## Using custom XML icons
 
 You can use your own Android XML vector drawables. Place them anywhere in your project, ensure `xml` is in Metro's `assetExts`, and import them:

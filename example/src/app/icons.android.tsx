@@ -1,8 +1,12 @@
 import { Host, Icon } from "@expo/ui/jetpack-compose";
 import { Home } from "@expo/material-symbols/home";
 import { Search } from "@expo/material-symbols/search";
-import { Star } from "@expo/material-symbols/star";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { Star } from "@expo/material-symbols/star";
+import BackspaceWght100 from "@/assets/backspace_wght100.xml";
+import BackspaceFillWght700 from "@/assets/backspace_fill_wght700.xml";
+import CheckBoxWght700 from "@/assets/backspace_wght700.xml";
+import DoNotDisturbOn from "@/assets/do_not_disturb_on.xml";
 
 const icons = [
   { name: "Star", source: Star },
@@ -39,6 +43,23 @@ export default function IconsScreen() {
               <Icon source={Star} size={size} />
             </Host>
             <Text style={styles.iconLabel}>{size}dp</Text>
+          </View>
+        ))}
+      </View>
+
+      <Text style={styles.sectionTitle}>Custom icons (via add-icon CLI)</Text>
+      <View style={styles.iconRow}>
+        {[
+          { name: "Backspace\nwght100", source: BackspaceWght100 },
+          { name: "CheckBox\nwght700", source: CheckBoxWght700 },
+          { name: "Backspace\nfill wght700", source: BackspaceFillWght700 },
+          { name: "DoNotDisturbOn", source: DoNotDisturbOn },
+        ].map(({ name, source }) => (
+          <View key={name} style={styles.iconCell}>
+            <Host matchContents>
+              <Icon source={source} size={32} />
+            </Host>
+            <Text style={styles.iconLabel}>{name}</Text>
           </View>
         ))}
       </View>
