@@ -4,7 +4,7 @@ import {
   iconToHTML,
   type IconifyIcon,
 } from "@iconify/utils";
-import svg2vectordrawable from "svg2vectordrawable";
+import { svgToVectorDrawable } from "./svg-to-vector-drawable";
 import { mkdir, writeFile } from "fs/promises";
 import type { IconifyJSON } from "@iconify/types";
 
@@ -60,7 +60,7 @@ async function main() {
   for (const { name, data } of icons) {
     const svg = iconToSVG(data);
     const svgString = iconToHTML(svg.body, svg.attributes);
-    const xml = await svg2vectordrawable(svgString);
+    const xml = svgToVectorDrawable(svgString);
 
     const fileName = toFileName(name);
     await writeFile(`${ICONS_DIR}/${fileName}.xml`, xml);
