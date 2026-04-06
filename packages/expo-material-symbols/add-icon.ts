@@ -183,6 +183,10 @@ Examples:
       const fileName = toFileName(params);
       const outputPath = resolve(outputDir, `${fileName}.xml`);
       await writeFile(outputPath, xml);
+      await writeFile(
+        resolve(outputDir, `${fileName}.d.xml.ts`),
+        "declare const value: number;\nexport default value;\n",
+      );
       return fileName;
     }),
   );

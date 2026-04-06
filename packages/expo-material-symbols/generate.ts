@@ -66,6 +66,10 @@ async function main() {
     const fileName = toFileName(name);
     await writeFile(`${ICONS_DIR}/${fileName}.xml`, xml);
     await writeFile(
+      `${ICONS_DIR}/${fileName}.d.xml.ts`,
+      "declare const value: number;\nexport default value;\n",
+    );
+    await writeFile(
       `${MODULES_DIR}/${fileName}.ts`,
       `export const ${toPascalCase(name)} = require('../icons/${fileName}.xml');\n`,
     );
