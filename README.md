@@ -10,20 +10,6 @@ Only the **outlined** style is shipped at the moment. For rounded or sharp style
 bun add @expo/material-symbols
 ```
 
-### Metro config
-
-Add `xml` to Metro's asset extensions so vector drawables can be imported:
-
-```js
-// metro.config.js
-const { getDefaultConfig } = require("expo/metro-config");
-const config = getDefaultConfig(__dirname);
-
-config.resolver.assetExts.push("xml");
-
-module.exports = config;
-```
-
 ## Usage
 
 Each icon is imported from its own subpath:
@@ -34,12 +20,12 @@ import { Star } from "@expo/material-symbols/star";
 import { Home } from "@expo/material-symbols/home";
 
 <Host matchContents>
-  <Icon source={Star} size={32} tintColor="#007AFF" />
+  <Icon source={Star} size={32} tint="#007AFF" />
 </Host>;
 ```
 
 - **`size`** — icon size in dp
-- **`tintColor`** — any React Native `ColorValue` (hex, named color, etc.). Overrides the XML's fill color at runtime.
+- **`tint`** — any React Native `ColorValue` (hex, named color, etc.). Overrides the XML's fill color at runtime.
 - **`<Host matchContents>`** is required — without it the Compose host has 0×0 size.
 
 ## How it works
@@ -90,7 +76,7 @@ The output is a ready-to-use XML vector drawable that you can import directly (s
 
 ## Using custom XML icons
 
-You can use your own Android XML vector drawables. Place them anywhere in your project, ensure `xml` is in Metro's `assetExts`, and import them:
+You can use your own Android XML vector drawables. Place them anywhere in your project and import them:
 
 ```tsx
 import { Host, Icon } from "@expo/ui/jetpack-compose";

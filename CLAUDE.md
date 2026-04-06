@@ -16,7 +16,7 @@ packages/expo-material-symbols/   # the library (@expo/material-symbols)
   modules/*.ts                    # generated (gitignored) one re-export per icon
   generate.ts                     # icon generation script (svg → xml), runs on `prepare`
 example/                          # test Expo app
-  metro.config.js                 # watchFolders=[monorepo root], assetExts includes 'xml'
+  metro.config.js                 # watchFolders=[monorepo root]
   src/app/icons.android.tsx       # Android test screen rendering icons
   src/app/icons.tsx               # iOS/web fallback (TODO)
 ```

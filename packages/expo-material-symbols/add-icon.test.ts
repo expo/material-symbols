@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { parseIconUrl, buildAxisSegment, toFileName } from "./add-icon";
+import { parseIconUrl, buildAxisSegment, toFileName, normalizeIconName } from "./add-icon";
 import type { IconParams } from "./add-icon";
 
 describe("parseIconUrl", () => {
@@ -118,6 +118,33 @@ describe("buildAxisSegment", () => {
   test("fill takes priority over weight", () => {
     expect(buildAxisSegment({ name: "star", style: "outlined", fill: 1, wght: 700, grad: 0, opsz: 24 }))
       .toBe("fill1");
+  });
+});
+
+describe("normalizeIconName", () => {
+  test("lowercases the name", () => {
+    expect(normalizeIconName("Star")).toBe("star");
+    expect(normalizeIconName("CHECK_BOX")).toBe("check_box");
+  });
+
+  test("replaces spaces with underscores", () => {
+    expect(normalizeIconName("check box")).toBe("check_box");
+    expect(normalizeIconName("arrow back ios")).toBe("arrow_back_ios");
+  });
+
+  test("replaces hyphens with underscores", () => {
+    expect(normalizeIconName("arrow-back-ios")).toBe("arrow_back_ios");
+  });
+
+  test("replaces consecutive spaces/hyphens with a single underscore", () => {
+    expect(normalizeIconName("arrow--back")).toBe("arrow_back");
+    expect(normalizeIconName("arrow  back")).toBe("arrow_back");
+    expect(normalizeIconName("arrow - back")).toBe("arrow_back");
+  });
+
+  test("handles already-normalized names", () => {
+    expect(normalizeIconName("check_box")).toBe("check_box");
+    expect(normalizeIconName("star")).toBe("star");
   });
 });
 
