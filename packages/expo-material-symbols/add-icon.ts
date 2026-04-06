@@ -1,7 +1,5 @@
 #!/usr/bin/env node
 import { parseArgs } from "util";
-import { SVG, cleanupSVG, parseColors, isEmptyColor, resetSVGOrigin, scaleSVG, runSVGO } from "@iconify/tools";
-import { svgToVectorDrawable } from "./svg-to-vector-drawable";
 import { mkdir, writeFile } from "fs/promises";
 import { resolve } from "path";
 
@@ -69,7 +67,7 @@ export function parseIconUrl(url: string): IconParams {
 /**
  * Build the gstatic axis segment. The API accepts one non-default axis or "default".
  * When all axes are default, use "default". Otherwise use the first non-default axis.
- * See: https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/{name}/{axis}/{opsz}px.svg
+ * See: https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/{name}/{axis}/{opsz}px.xml
  */
 export function buildAxisSegment(params: IconParams): string {
   // Check non-default axes
@@ -98,39 +96,10 @@ export function toFileName(params: IconParams): string {
   return suffixes.length > 0 ? `${base}_${suffixes.join("_")}` : base;
 }
 
-/**
- * Clean up a raw SVG using the same pipeline Iconify uses to normalize icons:
- * 1. cleanupSVG — remove dead code, bad attributes, convert styles to attrs
- * 2. parseColors — replace hardcoded colors with currentColor
- * 3. resetSVGOrigin — shift viewBox origin to (0,0) (gstatic uses "0 -960 960 960")
- * 4. scaleSVG — scale to 24×24 viewBox (gstatic uses 960×960)
- * 5. runSVGO — optimize paths and attributes
- */
-export async function cleanupSvg(raw: string): Promise<string> {
-  const svg = new SVG(raw);
-  cleanupSVG(svg);
-  parseColors(svg, {
-    defaultColor: "currentColor",
-    callback: (_attr, colorStr, color) => {
-      return !color || isEmptyColor(color) ? colorStr : "currentColor";
-    },
-  });
-  resetSVGOrigin(svg);
-
-  // Scale to 24×24 to match Iconify's coordinate system
-  const viewBox = svg.viewBox;
-  if (viewBox.width !== 24) {
-    scaleSVG(svg, 24 / viewBox.width);
-  }
-
-  await runSVGO(svg);
-  return svg.toMinifiedString();
-}
-
-export async function downloadSvg(params: IconParams): Promise<string> {
+export async function downloadXml(params: IconParams): Promise<string> {
   const axis = buildAxisSegment(params);
   const gstaticStyle = `materialsymbols${params.style}`;
-  const url = `${GSTATIC_BASE}/${gstaticStyle}/${params.name}/${axis}/${params.opsz}px.svg`;
+  const url = `${GSTATIC_BASE}/${gstaticStyle}/${params.name}/${axis}/${params.opsz}px.xml`;
 
   const response = await fetch(url);
   if (!response.ok) {
@@ -142,55 +111,93 @@ export async function downloadSvg(params: IconParams): Promise<string> {
     throw new Error(`Failed to download icon: HTTP ${response.status}\nURL: ${url}`);
   }
 
-  const raw = await response.text();
-  return cleanupSvg(raw);
+  return response.text();
 }
+
+const VALID_STYLES: IconStyle[] = ["outlined", "rounded", "sharp"];
 
 async function main() {
   const { values, positionals } = parseArgs({
     args: process.argv.slice(2),
     options: {
       output: { type: "string", short: "o", default: "./assets" },
+      style: { type: "string", short: "s", default: "outlined" },
+      fill: { type: "boolean", short: "f", default: false },
+      weight: { type: "string", short: "w", default: "400" },
+      grade: { type: "string", short: "g", default: "0" },
+      opsz: { type: "string", default: "24" },
       help: { type: "boolean", short: "h", default: false },
     },
     allowPositionals: true,
   });
 
   if (values.help || positionals.length === 0) {
-    console.log(`Usage: add-icon [options] <url-or-icon-name>
+    console.log(`Usage: add-icon [options] <icon-names-or-urls...>
 
-Downloads a Material Symbols icon from Google Fonts and saves it as an Android XML vector drawable.
+Downloads Material Symbols icons from Google Fonts as Android XML vector drawables.
 
 Arguments:
-  <url-or-icon-name>   Google Fonts icon URL or plain icon name (e.g. "search")
+  <icon-names-or-urls...>   One or more icon names or Google Fonts URLs
 
 Options:
-  -o, --output <dir>   Output directory (default: ./assets)
-  -h, --help           Show this help message
+  -o, --output <dir>        Output directory (default: ./assets)
+  -s, --style <style>       Icon style: outlined, rounded, sharp (default: outlined)
+  -f, --fill                Use filled variant (default: outline)
+  -w, --weight <wght>       Weight: 100-700 (default: 400)
+  -g, --grade <grad>        Grade: -25, 0, 200 (default: 0)
+      --opsz <size>         Optical size: 20, 24, 40, 48 (default: 24)
+  -h, --help                Show this help message
 
 Examples:
-  npx add-icon "https://fonts.google.com/icons?selected=Material+Symbols+Outlined:search:FILL@0;wght@400;GRAD@0;opsz@24"
-  npx add-icon search
-  npx add-icon -o ./my-icons star`);
+  npx add-icon search star home
+  npx add-icon --style rounded --fill search
+  npx add-icon -s sharp -w 300 star
+  npx add-icon "https://fonts.google.com/icons?selected=Material+Symbols+Outlined:search:FILL@0;wght@400;GRAD@0;opsz@24"`);
     process.exit(values.help ? 0 : 1);
   }
 
-  const input = positionals[0]!;
-  const params: IconParams = input.startsWith("http")
-    ? parseIconUrl(input)
-    : { name: normalizeIconName(input), style: "outlined" as IconStyle, fill: 0, wght: 400, grad: 0, opsz: 24 };
+  const style = values.style as IconStyle;
+  if (!VALID_STYLES.includes(style)) {
+    console.error(`Invalid style "${style}". Must be one of: ${VALID_STYLES.join(", ")}`);
+    process.exit(1);
+  }
 
-  const svgString = await downloadSvg(params);
-  const xml = svgToVectorDrawable(svgString);
+  const defaults: Omit<IconParams, "name"> = {
+    style,
+    fill: values.fill ? 1 : 0,
+    wght: Number(values.weight),
+    grad: Number(values.grade),
+    opsz: Number(values.opsz),
+  };
 
   const outputDir = values.output!;
   await mkdir(outputDir, { recursive: true });
 
-  const fileName = toFileName(params);
-  const outputPath = resolve(outputDir, `${fileName}.xml`);
-  await writeFile(outputPath, xml);
+  const results = await Promise.allSettled(
+    positionals.map(async (input) => {
+      const params: IconParams = input.startsWith("http")
+        ? parseIconUrl(input)
+        : { name: normalizeIconName(input), ...defaults };
 
-  console.log(`Saved ${fileName} → ${outputPath}`);
+      const xml = await downloadXml(params);
+      const fileName = toFileName(params);
+      const outputPath = resolve(outputDir, `${fileName}.xml`);
+      await writeFile(outputPath, xml);
+      return fileName;
+    }),
+  );
+
+  for (const result of results) {
+    if (result.status === "fulfilled") {
+      console.log(`Saved ${result.value}.xml`);
+    } else {
+      console.error(result.reason.message);
+    }
+  }
+
+  if (results.some((r) => r.status === "rejected")) {
+    process.exit(1);
+  }
 }
 
 // Only run CLI when executed directly (not when imported by tests)

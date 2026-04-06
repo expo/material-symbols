@@ -1,7 +1,21 @@
-node ../packages/expo-material-symbols/bin/add-icon.mjs "https://fonts.google.com/icons?selected=Material+Symbols+Outlined:backspace:FILL@1;wght@700;GRAD@0;opsz@40&icon.size=26&icon.color=%23ECB576" -o ./assets
+CLI=../packages/expo-material-symbols/bin/add-icon.mjs
+OUT=./assets
 
-node ../packages/expo-material-symbols/bin/add-icon.mjs "https://fonts.google.com/icons?selected=Material+Symbols+Outlined:backspace:FILL@0;wght@100;GRAD@0;opsz@40&icon.size=26&icon.color=%23ECB576" -o ./assets
+# Multiple icons at once
+node $CLI search star home -o $OUT
 
-node ../packages/expo-material-symbols/bin/add-icon.mjs "https://fonts.google.com/icons?selected=Material+Symbols+Outlined:backspace:FILL@0;wght@700;GRAD@0;opsz@40&icon.size=26&icon.color=%23ECB576" -o ./assets
+# Rounded style
+node $CLI -s rounded search star -o $OUT
 
-node ../packages/expo-material-symbols/bin/add-icon.mjs "Do Not Disturb On" -o ./assets
+# Sharp + filled
+node $CLI -s sharp --fill favorite -o $OUT
+
+# Custom weight
+node $CLI -w 100 backspace -o $OUT
+node $CLI -w 700 backspace -o $OUT
+
+# Filled + heavy weight
+node $CLI --fill -w 700 backspace -o $OUT
+
+# From a Google Fonts URL
+node $CLI "https://fonts.google.com/icons?selected=Material+Symbols+Outlined:do_not_disturb_on" -o $OUT
