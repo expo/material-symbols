@@ -51,11 +51,23 @@ import { Home } from "@expo/material-symbols/home";
 
 ## CLI: adding individual icons
 
-The `add-icon` CLI downloads a single Material Symbols icon as an Android XML vector drawable. This is useful when you want specific axis values (fill, weight, grade, optical size) instead of the default outlined set.
+The `add-icon` CLI downloads Material Symbols icons as Android XML vector drawables. This is useful when you want specific styles or axis values (fill, weight, grade, optical size) beyond the default outlined set.
 
 ```bash
-# By name (uses default axes: outlined, weight 400, grade 0, 24px)
-npx add-icon "Arrow Back"
+# By name (defaults: outlined, weight 400, no fill, grade 0, 24px)
+npx add-icon search
+
+# Multiple icons at once
+npx add-icon search star home
+
+# Rounded style
+npx add-icon --style rounded search star
+
+# Sharp + filled
+npx add-icon --style sharp --fill favorite
+
+# Custom weight
+npx add-icon --weight 300 star
 
 # From a Google Fonts URL (preserves the axes you picked in the UI)
 npx add-icon "https://fonts.google.com/icons?selected=Material+Symbols+Outlined:check_box:FILL@1;wght@300;GRAD@0;opsz@24"
@@ -64,10 +76,15 @@ npx add-icon "https://fonts.google.com/icons?selected=Material+Symbols+Outlined:
 npx add-icon -o ./my-icons search
 ```
 
-| Option               | Description      | Default    |
-| -------------------- | ---------------- | ---------- |
-| `-o, --output <dir>` | Output directory | `./assets` |
-| `-h, --help`         | Show help        |            |
+| Option                  | Description                                    | Default     |
+| ----------------------- | ---------------------------------------------- | ----------- |
+| `-o, --output <dir>`    | Output directory                               | `./assets`  |
+| `-s, --style <style>`   | Icon style: `outlined`, `rounded`, `sharp`     | `outlined`  |
+| `-f, --fill`            | Use filled variant                             |             |
+| `-w, --weight <wght>`   | Weight: 100–700                                | `400`       |
+| `-g, --grade <grad>`    | Grade: -25, 0, 200                             | `0`         |
+| `--opsz <size>`         | Optical size: 20, 24, 40, 48                   | `24`        |
+| `-h, --help`            | Show help                                      |             |
 
 The output is a ready-to-use XML vector drawable that you can import directly (see [Using custom XML icons](#using-custom-xml-icons)).
 

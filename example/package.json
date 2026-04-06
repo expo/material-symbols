@@ -4,18 +4,14 @@
   "version": "1.0.0",
   "scripts": {
     "start": "expo start --dev-client",
-    "reset-project": "node ./scripts/reset-project.js",
     "android": "expo run:android",
     "ios": "expo run:ios",
-    "web": "expo start --web",
-    "lint": "expo lint",
     "download-icons": "./scripts/download-icons.sh",
     "fix-deps": "npx expo install --fix"
   },
   "dependencies": {
     "@expo/material-symbols": "workspace:*",
     "@expo/ui": "~55.0.8",
-    "@react-native-vector-icons/ant-design": "^13.0.0",
     "@react-navigation/bottom-tabs": "^7.7.3",
     "@react-navigation/elements": "^2.8.1",
     "@react-navigation/native": "^7.1.28",

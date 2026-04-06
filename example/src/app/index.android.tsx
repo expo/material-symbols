@@ -14,7 +14,7 @@ import DoNotDisturbOn from "@/assets/do_not_disturb_on.xml";
 const sizes = [16, 24, 32, 48];
 const colors = ["#000000", "#007AFF", "#E53935", "#43A047"];
 
-export default function IconsScreen() {
+export default function App() {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>@expo/material-symbols</Text>
@@ -110,6 +110,7 @@ export default function IconsScreen() {
 const styles = StyleSheet.create({
   container: {
     padding: 16,
+    paddingTop: 48,
     rowGap: 20,
     paddingBottom: 40,
   },
