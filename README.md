@@ -20,12 +20,12 @@ import { Star } from "@expo/material-symbols/star";
 import { Home } from "@expo/material-symbols/home";
 
 <Host matchContents>
-  <Icon source={Star} size={32} tintColor="#007AFF" />
+  <Icon source={Star} size={32} tint="#007AFF" />
 </Host>;
 ```
 
 - **`size`** — icon size in dp
-- **`tintColor`** — any React Native `ColorValue` (hex, named color, etc.). Overrides the XML's fill color at runtime.
+- **`tint`** — any React Native `ColorValue` (hex, named color, etc.). Overrides the XML's fill color at runtime.
 - **`<Host matchContents>`** is required — without it the Compose host has 0×0 size.
 
 ## How it works
