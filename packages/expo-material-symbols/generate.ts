@@ -6,7 +6,8 @@ import {
 } from "@iconify/utils";
 import { svgToVectorDrawable } from "./svg-to-vector-drawable";
 import { mkdir, writeFile } from "fs/promises";
-import type { IconifyJSON } from "@iconify/types";
+
+type IconifyJSON = Parameters<typeof parseIconSet>[0];
 
 const ICONS_DIR = "./icons";
 const MODULES_DIR = "./modules";

@@ -18,16 +18,13 @@
     "generate": "bun run generate.ts",
     "update-icons": "bun run update-icons.ts",
     "add-icon": "bun run add-icon.ts",
-    "build-cli": "bun build add-icon.ts --target node --format esm --outfile bin/add-icon.mjs --external @iconify/tools",
+    "build-cli": "bun build add-icon.ts --target node --format esm --outfile bin/add-icon.mjs",
     "typecheck": "tsc",
     "test": "bun test",
     "prepare": "bun run generate.ts && bun run build-cli"
   },
-  "dependencies": {
-    "@iconify/tools": "^5.0.6"
-  },
+  "dependencies": {},
   "devDependencies": {
-    "@iconify/types": "^2.0.0",
     "@iconify/utils": "^3.1.0",
     "@types/bun": "latest"
   },

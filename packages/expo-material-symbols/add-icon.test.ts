@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { parseIconUrl, buildAxisSegment, toFileName, cleanupSvg } from "./add-icon";
+import { parseIconUrl, buildAxisSegment, toFileName } from "./add-icon";
 import type { IconParams } from "./add-icon";
 
 describe("parseIconUrl", () => {
@@ -148,22 +148,5 @@ describe("toFileName", () => {
   test("combines multiple suffixes", () => {
     expect(toFileName({ ...defaults, style: "rounded", fill: 1, wght: 700 }))
       .toBe("star_rounded_fill_wght700");
-  });
-});
-
-describe("cleanupSvg", () => {
-  test("normalizes gstatic SVG to 24x24 viewBox with currentColor", async () => {
-    const input = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960"><path d="M480-80q-83 0-141.5-58.5T280-280q0-83 58.5-141.5T480-480q83 0 141.5 58.5T680-280q0 83-58.5 141.5T480-80Z"/></svg>';
-    const result = await cleanupSvg(input);
-    expect(result).toContain('viewBox="0 0 24 24"');
-    expect(result).toContain("currentColor");
-    // Path coordinates should be in positive 24-space
-    expect(result).not.toContain("-960");
-  });
-
-  test("keeps already-clean 24x24 SVG", async () => {
-    const input = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2L2 22h20z"/></svg>';
-    const result = await cleanupSvg(input);
-    expect(result).toContain('viewBox="0 0 24 24"');
   });
 });
