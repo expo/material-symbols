@@ -65,18 +65,19 @@ export function parseIconUrl(url: string): IconParams {
 }
 
 /**
- * Build the gstatic axis segment. The API accepts one non-default axis or "default".
- * When all axes are default, use "default". Otherwise use the first non-default axis.
- * See: https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/{name}/{axis}/{opsz}px.xml
+ * Build the Google asset style segment used by the Material Symbols updater.
+ * Example segments: "default", "fill1", "gradN25fill1", "wght700grad200fill1".
  */
 export function buildAxisSegment(params: IconParams): string {
-  // Check non-default axes
-  if (params.fill === 1) return "fill1";
-  if (params.wght !== 400) return `wght${params.wght}`;
+  let segment = "";
+
+  if (params.wght !== 400) segment += `wght${params.wght}`;
   if (params.grad !== 0) {
-    return params.grad < 0 ? `gradN${Math.abs(params.grad)}` : `grad${params.grad}`;
+    segment += params.grad < 0 ? `gradN${Math.abs(params.grad)}` : `grad${params.grad}`;
   }
-  return "default";
+  if (params.fill === 1) segment += "fill1";
+
+  return segment || "default";
 }
 
 /** Normalize a human-typed icon name to the gstatic API format (lowercase, underscores). */
@@ -92,6 +93,7 @@ export function toFileName(params: IconParams): string {
   if (params.fill === 1) suffixes.push("fill");
   if (params.wght !== 400) suffixes.push(`wght${params.wght}`);
   if (params.grad !== 0) suffixes.push(`grad${params.grad}`);
+  if (params.opsz !== 24) suffixes.push(`opsz${params.opsz}`);
 
   return suffixes.length > 0 ? `${base}_${suffixes.join("_")}` : base;
 }

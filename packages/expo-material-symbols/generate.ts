@@ -1,24 +1,35 @@
-import {
-  parseIconSet,
-  iconToSVG,
-  iconToHTML,
-  type IconifyIcon,
-} from "@iconify/utils";
-import { svgToVectorDrawable } from "./svg-to-vector-drawable";
 import { mkdir, writeFile } from "fs/promises";
-
-type IconifyJSON = Parameters<typeof parseIconSet>[0];
 
 const ICONS_DIR = "./icons";
 const MODULES_DIR = "./modules";
-const ICON_SET_PATH = "./material-symbols.json";
+const METADATA_PATH = "./material-symbols-metadata.json";
+const METADATA_URL =
+  "https://fonts.google.com/metadata/icons?incomplete=1&key=material_symbols";
+const OUTLINED_FAMILY = "Material Symbols Outlined";
+const OUTLINED_STYLE_SLUG = "materialsymbolsoutlined";
+const DEFAULT_STYLE_SEGMENT = "default";
+const DEFAULT_OPSZ = 24;
+
+interface MetadataIcon {
+  name: string;
+  unsupported_families?: string[];
+}
+
+interface MetadataResponse {
+  host: string;
+  families: string[];
+  icons: MetadataIcon[];
+}
+
+function stripMetadataPrefix(raw: string): string {
+  return raw.startsWith(")]}'") ? raw.slice(4) : raw;
+}
 
 function toPascalCase(str: string): string {
   const pascal = str
-    .split("-")
+    .split(/[-_]/g)
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
     .join("");
-  // Prefix with underscore if starts with digit
   return /^\d/.test(pascal) ? `_${pascal}` : pascal;
 }
 
@@ -26,57 +37,67 @@ function toFileName(name: string): string {
   return name.replace(/-/g, "_");
 }
 
-/** Keep only outlined style — filter out -rounded and -sharp suffixes */
-function isOutlinedStyle(name: string): boolean {
-  return !name.endsWith("-rounded") && !name.endsWith("-sharp");
+function getExportSource(fileName: string): string {
+  return `export const ${toPascalCase(fileName)} = require('../icons/${fileName}.xml');\n`;
+}
+
+async function loadMetadata(): Promise<MetadataResponse> {
+  const metadataFile = Bun.file(METADATA_PATH);
+  if (await metadataFile.exists()) {
+    return (await metadataFile.json()) as MetadataResponse;
+  }
+
+  console.log(`Downloading metadata from ${METADATA_URL}...`);
+  const response = await fetch(METADATA_URL);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch metadata: HTTP ${response.status}`);
+  }
+
+  const metadata = JSON.parse(
+    stripMetadataPrefix(await response.text()),
+  ) as MetadataResponse;
+  await Bun.write(METADATA_PATH, JSON.stringify(metadata, null, 2));
+  return metadata;
+}
+
+function isOutlinedIcon(icon: MetadataIcon): boolean {
+  return !icon.unsupported_families?.includes(OUTLINED_FAMILY);
+}
+
+function createIconUrl(host: string, name: string): string {
+  return `https://${host}/s/i/short-term/release/${OUTLINED_STYLE_SLUG}/${name}/${DEFAULT_STYLE_SEGMENT}/${DEFAULT_OPSZ}px.xml`;
+}
+
+async function downloadIconXml(host: string, name: string): Promise<string> {
+  const url = createIconUrl(host, name);
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Failed to download ${name}: HTTP ${response.status}\nURL: ${url}`);
+  }
+  return response.text();
 }
 
 async function main() {
-  const file = Bun.file(ICON_SET_PATH);
-  if (!(await file.exists())) {
-    throw new Error(
-      `${ICON_SET_PATH} not found. Run "bun run update-icons" to download it.`,
-    );
+  const metadata = await loadMetadata();
+  if (!metadata.families.includes(OUTLINED_FAMILY)) {
+    throw new Error(`Metadata does not include ${OUTLINED_FAMILY}`);
   }
-  const iconSet = (await file.json()) as IconifyJSON;
 
   await mkdir(ICONS_DIR, { recursive: true });
   await mkdir(MODULES_DIR, { recursive: true });
 
-  // Collect outlined-style icons only
-  const icons: { name: string; data: IconifyIcon }[] = [];
+  const icons = metadata.icons.filter(isOutlinedIcon);
+  console.log(`Processing ${icons.length} outlined icons from Google metadata...`);
 
-  parseIconSet(iconSet, (name, data) => {
-    if (!data) return;
-    if (isOutlinedStyle(name)) {
-      icons.push({ name, data });
-    }
-  });
+  for (const icon of icons) {
+    const fileName = toFileName(icon.name);
+    const xml = await downloadIconXml(metadata.host, icon.name);
 
-  console.log(`Processing ${icons.length} outlined icons...`);
-
-  // Generate XML files and per-icon modules
-  const exports: { fileName: string; exportName: string }[] = [];
-
-  for (const { name, data } of icons) {
-    const svg = iconToSVG(data);
-    const svgString = iconToHTML(svg.body, svg.attributes);
-    const xml = svgToVectorDrawable(svgString);
-
-    const fileName = toFileName(name);
     await writeFile(`${ICONS_DIR}/${fileName}.xml`, xml);
-    await writeFile(
-      `${MODULES_DIR}/${fileName}.ts`,
-      `export const ${toPascalCase(name)} = require('../icons/${fileName}.xml');\n`,
-    );
-
-    exports.push({
-      fileName,
-      exportName: toPascalCase(name),
-    });
+    await writeFile(`${MODULES_DIR}/${fileName}.ts`, getExportSource(fileName));
   }
 
-  console.log(`Generated ${exports.length} icons and modules`);
+  console.log(`Generated ${icons.length} icons and modules`);
 }
 
 main().catch(console.error);

@@ -115,9 +115,14 @@ describe("buildAxisSegment", () => {
       .toBe("gradN25");
   });
 
-  test("fill takes priority over weight", () => {
+  test("combines weight and fill segments", () => {
     expect(buildAxisSegment({ name: "star", style: "outlined", fill: 1, wght: 700, grad: 0, opsz: 24 }))
-      .toBe("fill1");
+      .toBe("wght700fill1");
+  });
+
+  test("combines weight, grade, and fill segments in Google's order", () => {
+    expect(buildAxisSegment({ name: "star", style: "outlined", fill: 1, wght: 700, grad: -25, opsz: 24 }))
+      .toBe("wght700gradN25fill1");
   });
 });
 
@@ -172,8 +177,12 @@ describe("toFileName", () => {
     expect(toFileName({ ...defaults, grad: -25 })).toBe("star_grad-25");
   });
 
+  test("includes optical size suffix when non-default", () => {
+    expect(toFileName({ ...defaults, opsz: 48 })).toBe("star_opsz48");
+  });
+
   test("combines multiple suffixes", () => {
-    expect(toFileName({ ...defaults, style: "rounded", fill: 1, wght: 700 }))
-      .toBe("star_rounded_fill_wght700");
+    expect(toFileName({ ...defaults, style: "rounded", fill: 1, wght: 700, opsz: 48 }))
+      .toBe("star_rounded_fill_wght700_opsz48");
   });
 });

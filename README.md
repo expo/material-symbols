@@ -30,7 +30,8 @@ import { Home } from "@expo/material-symbols/home";
 
 ## How it works
 
-- `generate.ts` downloads the [Iconify material-symbols](https://github.com/iconify/icon-sets) set, filters to outlined style, converts SVGs to Android vector drawables (`icons/*.xml`), and generates per-icon TypeScript modules (`modules/*.ts`).
+- `update-icons.ts` downloads the latest Material Symbols metadata from Google Fonts.
+- `generate.ts` uses that metadata to fetch the official outlined Android XML vector drawables from Google's asset host (`icons/*.xml`) and generates per-icon TypeScript modules (`modules/*.ts`).
 - Each module does `export const Star = require('../icons/star.xml')`, giving Metro a numeric asset ID.
 - The `@expo/ui` `<Icon>` component resolves the asset and renders it natively via Jetpack Compose.
 - Icons and modules are generated at install time via the `prepare` script and are gitignored.
@@ -88,11 +89,11 @@ const MyIcon = require("./assets/my-icon.xml");
 </Host>;
 ```
 
-This works for rounded, sharp, or any custom Material Symbols style — just export the SVG from [Google Fonts](https://fonts.google.com/icons) and convert it to an Android vector drawable.
+This works for rounded, sharp, or any custom Material Symbols style — you can download the Android drawable XML directly from Google Fonts via `add-icon`, or provide your own XML asset.
 
 ## Credits
 
-The icon SVGs are from Google's [Material Symbols](https://github.com/google/material-design-icons), licensed under [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0). Icon data is sourced via the [Iconify icon-sets](https://github.com/iconify/icon-sets) collection.
+The icons are from Google's [Material Symbols](https://github.com/google/material-design-icons), licensed under [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0). Package generation uses Google Fonts metadata and Google-hosted Android XML assets.
 
 ## Development
 
