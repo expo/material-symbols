@@ -1,7 +1,6 @@
 import { mkdir, writeFile } from "fs/promises";
 
 const ICONS_DIR = "./icons";
-const MODULES_DIR = "./modules";
 const METADATA_PATH = "./material-symbols-metadata.json";
 const METADATA_URL =
   "https://fonts.google.com/metadata/icons?incomplete=1&key=material_symbols";
@@ -25,20 +24,8 @@ function stripMetadataPrefix(raw: string): string {
   return raw.startsWith(")]}'") ? raw.slice(4) : raw;
 }
 
-function toPascalCase(str: string): string {
-  const pascal = str
-    .split(/[-_]/g)
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join("");
-  return /^\d/.test(pascal) ? `_${pascal}` : pascal;
-}
-
 function toFileName(name: string): string {
   return name.replace(/-/g, "_");
-}
-
-function getExportSource(fileName: string): string {
-  return `export const ${toPascalCase(fileName)} = require('../icons/${fileName}.xml');\n`;
 }
 
 async function loadMetadata(): Promise<MetadataResponse> {
@@ -84,7 +71,6 @@ async function main() {
   }
 
   await mkdir(ICONS_DIR, { recursive: true });
-  await mkdir(MODULES_DIR, { recursive: true });
 
   const icons = metadata.icons.filter(isOutlinedIcon);
   console.log(`Processing ${icons.length} outlined icons from Google metadata...`);
@@ -94,10 +80,9 @@ async function main() {
     const xml = await downloadIconXml(metadata.host, icon.name);
 
     await writeFile(`${ICONS_DIR}/${fileName}.xml`, xml);
-    await writeFile(`${MODULES_DIR}/${fileName}.ts`, getExportSource(fileName));
   }
 
-  console.log(`Generated ${icons.length} icons and modules`);
+  console.log(`Generated ${icons.length} icons`);
 }
 
 main().catch(console.error);

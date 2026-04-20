@@ -4,15 +4,22 @@
   "sideEffects": false,
   "files": [
     "icons",
-    "modules",
     "bin",
+    "xml.d.ts",
     "NOTICE"
   ],
   "bin": {
     "add-icon": "./bin/add-icon.mjs"
   },
   "exports": {
-    "./*": "./modules/*.ts"
+    "./*": {
+      "types": "./xml.d.ts",
+      "default": "./icons/*.xml"
+    },
+    "./*.xml": {
+      "types": "./xml.d.ts",
+      "default": "./icons/*.xml"
+    }
   },
   "scripts": {
     "generate": "bun run generate.ts",
