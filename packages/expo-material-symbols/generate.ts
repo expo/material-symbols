@@ -2,6 +2,9 @@ import { mkdir, writeFile } from "fs/promises";
 
 const ICONS_DIR = "./icons";
 const METADATA_PATH = "./material-symbols-metadata.json";
+// Per-icon .d.ts so TS errors on non-existent subpaths (wildcard exports alone can't
+// verify the target exists). Content is identical for every icon; Metro returns an asset id.
+const TYPE_FILE = "declare const src: number;\nexport default src;\n";
 const METADATA_URL =
   "https://fonts.google.com/metadata/icons?incomplete=1&key=material_symbols";
 const OUTLINED_FAMILY = "Material Symbols Outlined";
@@ -80,6 +83,7 @@ async function main() {
     const xml = await downloadIconXml(metadata.host, icon.name);
 
     await writeFile(`${ICONS_DIR}/${fileName}.xml`, xml);
+    await writeFile(`${ICONS_DIR}/${fileName}.xml.d.ts`, TYPE_FILE);
   }
 
   console.log(`Generated ${icons.length} icons`);

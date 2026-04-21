@@ -5,7 +5,6 @@
   "files": [
     "icons",
     "bin",
-    "xml.d.ts",
     "NOTICE"
   ],
   "bin": {
@@ -13,11 +12,11 @@
   },
   "exports": {
     "./*": {
-      "types": "./xml.d.ts",
+      "types": "./icons/*.xml.d.ts",
       "default": "./icons/*.xml"
     },
     "./*.xml": {
-      "types": "./xml.d.ts",
+      "types": "./icons/*.xml.d.ts",
       "default": "./icons/*.xml"
     }
   },
@@ -29,7 +28,7 @@
     "typecheck": "tsc",
     "test": "bun test",
     "prepare": "bun run build-cli",
-    "prepublishOnly": "bun run update-icons.ts && bun run generate.ts"
+    "prepublishOnly": "bun run generate.ts"
   },
   "dependencies": {},
   "devDependencies": {
