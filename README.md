@@ -1,6 +1,6 @@
 # @expo/material-symbols
 
-[Material Symbols](https://fonts.google.com/icons) icon library for Expo/React Native Android. Icons are Android XML vector drawables, imported as Metro assets and rendered via `@expo/ui`. Only the icons you import are bundled — each icon lives at its own subpath (`@expo/material-symbols/star`), so unused icons are never resolved by Metro.
+[Material Symbols](https://fonts.google.com/icons) icon library for Expo/React Native Android. Icons are Android XML vector drawables, imported as Metro assets and rendered via `@expo/ui`. Only the icons you import are bundled — each icon lives at its own subpath (`@expo/material-symbols/star.xml`), so unused icons are never resolved by Metro.
 
 Only the **outlined** style is shipped at the moment. For rounded or sharp styles, see [Using custom XML icons](#using-custom-xml-icons).
 
@@ -16,8 +16,8 @@ Each icon is imported from its own subpath:
 
 ```tsx
 import { Host, Icon } from "@expo/ui/jetpack-compose";
-import { Star } from "@expo/material-symbols/star";
-import { Home } from "@expo/material-symbols/home";
+import Star from "@expo/material-symbols/star.xml";
+import Home from "@expo/material-symbols/home.xml";
 
 <Host matchContents>
   <Icon source={Star} size={32} tint="#007AFF" />
@@ -31,10 +31,10 @@ import { Home } from "@expo/material-symbols/home";
 ## How it works
 
 - `update-icons.ts` downloads the latest Material Symbols metadata from Google Fonts.
-- `generate.ts` uses that metadata to fetch the official outlined Android XML vector drawables from Google's asset host (`icons/*.xml`) and generates per-icon TypeScript modules (`modules/*.ts`).
-- Each module does `export const Star = require('../icons/star.xml')`, giving Metro a numeric asset ID.
+- `generate.ts` uses that metadata to fetch the official outlined Android XML vector drawables from Google's asset host (`icons/*.xml`) and writes a per-icon `.xml.d.ts` next to each one so TypeScript can verify the subpath.
+- The package's `exports` map points `./*.xml` at `./icons/*.xml`, so `import Star from "@expo/material-symbols/star.xml"` resolves to the asset and Metro returns a numeric asset ID.
 - The `@expo/ui` `<Icon>` component resolves the asset and renders it natively via Jetpack Compose.
-- Icons and modules are generated at install time via the `prepare` script and are gitignored.
+- Icons and their `.d.ts` files are generated at publish time via `prepublishOnly` and shipped in the npm tarball. They're gitignored in the repo, so run `bun run generate` after cloning to populate `icons/` for local development.
 
 ## CLI: adding individual icons
 
