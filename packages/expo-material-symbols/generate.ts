@@ -1,14 +1,17 @@
 import { mkdir, writeFile } from "fs/promises";
+import { forEachConcurrentAsync } from "./for-each-concurrent-async";
 
 const ICONS_DIR = "./icons";
-const MODULES_DIR = "./modules";
 const METADATA_PATH = "./material-symbols-metadata.json";
-const METADATA_URL =
-  "https://fonts.google.com/metadata/icons?incomplete=1&key=material_symbols";
+// Per-icon .d.ts so TS errors on non-existent subpaths (wildcard exports alone can't
+// verify the target exists). Content is identical for every icon; Metro returns an asset id.
+const TYPE_FILE = "declare const src: number;\nexport default src;\n";
+const METADATA_URL = "https://fonts.google.com/metadata/icons?incomplete=1&key=material_symbols";
 const OUTLINED_FAMILY = "Material Symbols Outlined";
 const OUTLINED_STYLE_SLUG = "materialsymbolsoutlined";
 const DEFAULT_STYLE_SEGMENT = "default";
 const DEFAULT_OPSZ = 24;
+const DOWNLOAD_CONCURRENCY = 6;
 
 interface MetadataIcon {
   name: string;
@@ -25,20 +28,8 @@ function stripMetadataPrefix(raw: string): string {
   return raw.startsWith(")]}'") ? raw.slice(4) : raw;
 }
 
-function toPascalCase(str: string): string {
-  const pascal = str
-    .split(/[-_]/g)
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join("");
-  return /^\d/.test(pascal) ? `_${pascal}` : pascal;
-}
-
 function toFileName(name: string): string {
   return name.replace(/-/g, "_");
-}
-
-function getExportSource(fileName: string): string {
-  return `export const ${toPascalCase(fileName)} = require('../icons/${fileName}.xml');\n`;
 }
 
 async function loadMetadata(): Promise<MetadataResponse> {
@@ -53,9 +44,7 @@ async function loadMetadata(): Promise<MetadataResponse> {
     throw new Error(`Failed to fetch metadata: HTTP ${response.status}`);
   }
 
-  const metadata = JSON.parse(
-    stripMetadataPrefix(await response.text()),
-  ) as MetadataResponse;
+  const metadata = JSON.parse(stripMetadataPrefix(await response.text())) as MetadataResponse;
   await Bun.write(METADATA_PATH, JSON.stringify(metadata, null, 2));
   return metadata;
 }
@@ -77,6 +66,13 @@ async function downloadIconXml(host: string, name: string): Promise<string> {
   return response.text();
 }
 
+async function generateIcon(host: string, icon: MetadataIcon): Promise<void> {
+  const fileName = toFileName(icon.name);
+  const xml = await downloadIconXml(host, icon.name);
+  await writeFile(`${ICONS_DIR}/${fileName}.xml`, xml);
+  await writeFile(`${ICONS_DIR}/${fileName}.xml.d.ts`, TYPE_FILE);
+}
+
 async function main() {
   const metadata = await loadMetadata();
   if (!metadata.families.includes(OUTLINED_FAMILY)) {
@@ -84,20 +80,15 @@ async function main() {
   }
 
   await mkdir(ICONS_DIR, { recursive: true });
-  await mkdir(MODULES_DIR, { recursive: true });
 
   const icons = metadata.icons.filter(isOutlinedIcon);
   console.log(`Processing ${icons.length} outlined icons from Google metadata...`);
 
-  for (const icon of icons) {
-    const fileName = toFileName(icon.name);
-    const xml = await downloadIconXml(metadata.host, icon.name);
+  await forEachConcurrentAsync(icons, DOWNLOAD_CONCURRENCY, (icon) =>
+    generateIcon(metadata.host, icon)
+  );
 
-    await writeFile(`${ICONS_DIR}/${fileName}.xml`, xml);
-    await writeFile(`${MODULES_DIR}/${fileName}.ts`, getExportSource(fileName));
-  }
-
-  console.log(`Generated ${icons.length} icons and modules`);
+  console.log(`Generated ${icons.length} icons`);
 }
 
 main().catch(console.error);

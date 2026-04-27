@@ -4,7 +4,6 @@
   "sideEffects": false,
   "files": [
     "icons",
-    "modules",
     "bin",
     "NOTICE"
   ],
@@ -12,7 +11,10 @@
     "add-icon": "./bin/add-icon.mjs"
   },
   "exports": {
-    "./*": "./modules/*.ts"
+    "./*.xml": {
+      "types": "./icons/*.xml.d.ts",
+      "default": "./icons/*.xml"
+    }
   },
   "scripts": {
     "generate": "bun run generate.ts",
@@ -22,7 +24,7 @@
     "typecheck": "tsc",
     "test": "bun test",
     "prepare": "bun run build-cli",
-    "prepublishOnly": "bun run update-icons.ts && bun run generate.ts"
+    "prepublishOnly": "bun run generate.ts"
   },
   "dependencies": {},
   "devDependencies": {

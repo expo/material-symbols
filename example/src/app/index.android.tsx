@@ -1,8 +1,8 @@
 import { Host, Icon } from "@expo/ui/jetpack-compose";
-import { Home } from "@expo/material-symbols/home";
-import { Search } from "@expo/material-symbols/search";
+import Home from "@expo/material-symbols/home.xml";
+import Search from "@expo/material-symbols/search.xml";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-import { Star } from "@expo/material-symbols/star";
+import Star from "@expo/material-symbols/star.xml";
 import SearchRounded from "@/assets/search_rounded.xml";
 import StarRounded from "@/assets/star_rounded.xml";
 import FavoriteSharpFill from "@/assets/favorite_sharp_fill.xml";
