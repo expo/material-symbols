@@ -1,20 +1,16 @@
 {
   "name": "@expo/material-symbols",
   "version": "0.1.0",
+  "description": "Material Symbols icons for Expo, rendered via @expo/ui.",
   "sideEffects": false,
-  "files": [
-    "icons",
-    "bin",
-    "NOTICE"
-  ],
-  "bin": {
-    "add-icon": "./bin/add-icon.mjs"
-  },
   "exports": {
     "./*.xml": {
       "types": "./icons/*.xml.d.ts",
       "default": "./icons/*.xml"
     }
+  },
+  "bin": {
+    "add-icon": "./bin/add-icon.mjs"
   },
   "scripts": {
     "generate": "bun run generate.ts",
@@ -26,11 +22,35 @@
     "prepare": "bun run build-cli",
     "prepublishOnly": "bun run generate.ts"
   },
+  "bugs": {
+    "url": "https://github.com/expo/material-symbols/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/expo/material-symbols.git",
+    "directory": "packages/expo-material-symbols"
+  },
+  "author": "650 Industries, Inc.",
+  "license": "MIT",
+  "files": [
+    "icons",
+    "bin",
+    "NOTICE",
+    "README.md"
+  ],
+  "keywords": [
+    "android",
+    "expo",
+    "expo-ui",
+    "icons",
+    "jetpack-compose",
+    "material-design",
+    "material-symbols",
+    "react-native",
+    "vector-drawable"
+  ],
   "dependencies": {},
   "devDependencies": {
     "@types/bun": "latest"
-  },
-  "peerDependencies": {
-    "typescript": "^5"
   }
 }
