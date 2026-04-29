@@ -38,29 +38,29 @@ import Home from "@expo/material-symbols/home.xml";
 
 ## CLI: adding individual icons
 
-The `add-icon` CLI downloads Material Symbols icons as Android XML vector drawables. This is useful when you want specific styles or axis values (fill, weight, grade, optical size) beyond the default outlined set.
+The `add-material-symbols` CLI downloads Material Symbols icons as Android XML vector drawables. This is useful when you want specific styles or axis values (fill, weight, grade, optical size) beyond the default outlined set.
 
 ```bash
 # By name (defaults: outlined, weight 400, no fill, grade 0, 24px)
-npx add-icon search
+npx add-material-symbols search
 
 # Multiple icons at once
-npx add-icon search star home
+npx add-material-symbols search star home
 
 # Rounded style
-npx add-icon --style rounded search star
+npx add-material-symbols --style rounded search star
 
 # Sharp + filled
-npx add-icon --style sharp --fill favorite
+npx add-material-symbols --style sharp --fill favorite
 
 # Custom weight
-npx add-icon --weight 300 star
+npx add-material-symbols --weight 300 star
 
 # From a Google Fonts URL (preserves the axes you picked in the UI)
-npx add-icon "https://fonts.google.com/icons?selected=Material+Symbols+Outlined:check_box:FILL@1;wght@300;GRAD@0;opsz@24"
+npx add-material-symbols "https://fonts.google.com/icons?selected=Material+Symbols+Outlined:check_box:FILL@1;wght@300;GRAD@0;opsz@24"
 
 # Custom output directory
-npx add-icon -o ./my-icons search
+npx add-material-symbols -o ./my-icons search
 ```
 
 | Option                  | Description                                    | Default     |
@@ -89,7 +89,7 @@ const MyIcon = require("./assets/my-icon.xml");
 </Host>;
 ```
 
-This works for rounded, sharp, or any custom Material Symbols style — you can download the Android drawable XML directly from Google Fonts via `add-icon`, or provide your own XML asset.
+This works for rounded, sharp, or any custom Material Symbols style — you can download the Android drawable XML directly from Google Fonts via `add-material-symbols`, or provide your own XML asset.
 
 ## Credits
 

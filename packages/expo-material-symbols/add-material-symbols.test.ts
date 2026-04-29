@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { parseIconUrl, buildAxisSegment, toFileName, normalizeIconName } from "./add-icon";
-import type { IconParams } from "./add-icon";
+import { parseIconUrl, buildAxisSegment, toFileName, normalizeIconName } from "./add-material-symbols";
+import type { IconParams } from "./add-material-symbols";
 
 describe("parseIconUrl", () => {
   test("parses icon name and all axis values", () => {

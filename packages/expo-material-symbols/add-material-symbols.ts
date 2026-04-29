@@ -134,7 +134,7 @@ async function main() {
   });
 
   if (values.help || positionals.length === 0) {
-    console.log(`Usage: add-icon [options] <icon-names-or-urls...>
+    console.log(`Usage: add-material-symbols [options] <icon-names-or-urls...>
 
 Downloads Material Symbols icons from Google Fonts as Android XML vector drawables.
 
@@ -151,10 +151,10 @@ Options:
   -h, --help                Show this help message
 
 Examples:
-  npx add-icon search star home
-  npx add-icon --style rounded --fill search
-  npx add-icon -s sharp -w 300 star
-  npx add-icon "https://fonts.google.com/icons?selected=Material+Symbols+Outlined:search:FILL@0;wght@400;GRAD@0;opsz@24"`);
+  npx add-material-symbols search star home
+  npx add-material-symbols --style rounded --fill search
+  npx add-material-symbols -s sharp -w 300 star
+  npx add-material-symbols "https://fonts.google.com/icons?selected=Material+Symbols+Outlined:search:FILL@0;wght@400;GRAD@0;opsz@24"`);
     process.exit(values.help ? 0 : 1);
   }
 
@@ -206,7 +206,7 @@ Examples:
 const isMain =
   typeof import.meta.main === "boolean"
     ? import.meta.main // Bun
-    : process.argv[1]?.includes("add-icon"); // Node
+    : process.argv[1]?.includes("add-material-symbols"); // Node
 if (isMain) {
   main().catch((err) => {
     console.error(err.message);
