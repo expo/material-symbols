@@ -1,6 +1,6 @@
 {
   "name": "@expo/material-symbols",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Material Symbols icons for Expo, rendered via @expo/ui.",
   "sideEffects": false,
   "exports": {
@@ -36,7 +36,8 @@
     "icons",
     "bin",
     "NOTICE",
-    "README.md"
+    "README.md",
+    "CHANGELOG.md"
   ],
   "keywords": [
     "android",
