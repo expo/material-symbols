@@ -1,0 +1,9 @@
+{
+  "packages": {
+    "packages/expo-material-symbols": {
+      "release-type": "node",
+      "package-name": "expo-material-symbols",
+      "include-component-in-tag": false
+    }
+  }
+}
