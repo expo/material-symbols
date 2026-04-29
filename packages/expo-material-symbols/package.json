@@ -36,7 +36,8 @@
     "icons",
     "bin",
     "NOTICE",
-    "README.md"
+    "README.md",
+    "CHANGELOG.md"
   ],
   "keywords": [
     "android",
