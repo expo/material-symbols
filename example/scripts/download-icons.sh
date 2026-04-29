@@ -1,4 +1,4 @@
-CLI=../packages/expo-material-symbols/bin/add-icon.mjs
+CLI=../packages/expo-material-symbols/bin/add-material-symbols.mjs
 OUT=./assets
 
 # Multiple icons at once
