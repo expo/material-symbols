@@ -42,13 +42,13 @@ The `add-material-symbols` CLI downloads Material Symbols icons as Android XML v
 
 ```bash
 # By name (defaults: outlined, weight 400, no fill, grade 0, 24px)
-npx add-material-symbols search
+npx add-material-symbols bookmark
 
 # Multiple icons at once
-npx add-material-symbols search star home
+npx add-material-symbols bookmark star home
 
 # Rounded style
-npx add-material-symbols --style rounded search star
+npx add-material-symbols --style rounded bookmark star
 
 # Sharp + filled
 npx add-material-symbols --style sharp --fill favorite
@@ -60,7 +60,7 @@ npx add-material-symbols --weight 300 star
 npx add-material-symbols "https://fonts.google.com/icons?selected=Material+Symbols+Outlined:check_box:FILL@1;wght@300;GRAD@0;opsz@24"
 
 # Custom output directory
-npx add-material-symbols -o ./my-icons search
+npx add-material-symbols -o ./my-icons bookmark
 ```
 
 | Option                  | Description                                    | Default     |
